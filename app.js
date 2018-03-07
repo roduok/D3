@@ -30,6 +30,7 @@ d3.csv("censusData.csv", function(err, censusData) {
   censusData.forEach(function(data) {
     data.poverty = +data.poverty;
     data.no_highschool = +data.no_highschool;
+    data.state = data.state
 
   });
 
@@ -103,13 +104,14 @@ d3.csv("censusData.csv", function(err, censusData) {
     .enter()
     .append("circle")
     .attr("cx", function(data, index) {
-      return xLinearScale(+data.poverty);
+      return xLinearScale(data.poverty);
     })
     .attr("cy", function(data, index) {
-      return yLinearScale(+data.no_highschool);
+      return yLinearScale(data.no_highschool);
     })
     .attr("r", "15")
     .attr("fill", "#E75480")
+    .style("opacity", .75)
     // display tooltip on click
     .on("click", function(data) {
       toolTip.show(data);
@@ -118,8 +120,29 @@ d3.csv("censusData.csv", function(err, censusData) {
     .on("mouseout", function(data, index) {
       toolTip.hide(data)
     
+    });
+ chart
+  .selectAll("g")
+  .data(censusData)
+  .enter()
+  .append("text")
+  .attr("dx", function(data, index) {
+    return xLinearScale(data.poverty) - 11.5
+  })
+  .attr("dy", function(data) {
+    return yLinearScale(data.no_highschool) + 4
+  })
+  .text(function(data, index) {
+    return data.state;
+  })
+  .on("click", function(data) {
+    toolTip.show(data);
     })
- 
+    // hide tooltip on mouseout
+  .on("mouseout", function(data, index) {
+    toolTip.hide(data)
+    
+    });   
 
   // Append an SVG group for the x-axis, then display the x-axis
   chart
@@ -157,9 +180,6 @@ d3.csv("censusData.csv", function(err, censusData) {
 
  
 
-      
-    
-   
   
   
 
